@@ -1,0 +1,16 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Math Operations">
+
+<listeners>
+	<listener class-name="com.nlsinc.testnghomework.testcases.CustomListener" />
+</listeners>
+
+<parameter name="input" value="1"></parameter>
+<test name = "Math Operations Test">
+	<classes>
+		<class name = "com.nlsinc.testnghomework.testcases.MathOperationsTests"></class>
+	</classes>
+</test>
+
+
+</suite>

@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<project name="TESTNG" default="main" basedir=".">
+	<!-- Sets variables which can later be used. -->
+	<!-- The value of a property is accessed via ${} -->
+	<property name="test" location="${basedir}\src" />
+	<property name="jars" location="${basedir}\TestNGJars" />
+	<property name="build.dir" location="${basedir}\build" />
+	<property name="build.test.dir" location="${basedir}\build\tests" />
+	<property name="junit-xml-dir" value="${basedir}/test-output/junitreports"/>
+	<property name="test.report.dir" location="${basedir}\TestReport" />
+	<property name="jar.artifact" location="${basedir}\Jars" />
+
+
+	<!-- Setting classpath -->
+	
+	<target name="setClassPath" unless="test.classpath">
+		<path id="classpath_jars">
+			<fileset dir= "${jars}" includes="*.jar"/>
+		</path>
+		<pathconvert pathsep=";"
+			property="test.classpath"
+			refid="classpath_jars"/>
+	</target>
+		
+	<target name="init" depends="setClassPath">
+		<taskdef name="testng" classpath="${test.classpath}"
+			classname="org.testng.TestNGAntTask"/>
+	</target>
+	
+	<!-- Deletes the existing build, docs and dist directory-->
+	<target name="clean">
+		<delete dir="${build.dir}" />
+		<delete dir="${test.report.dir}" />
+		<delete dir="${jar.artifact}" />
+	</target>
+
+	<!-- Creates the  build, a test directory in build, and a test report directory-->
+	<target name="makedir">
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${build.test.dir}" />
+		<mkdir dir="${test.report.dir}" />
+		<mkdir dir="${jar.artifact}" />
+	</target>
+
+	<!-- Compiles the java code (including the usage of library for JUnit -->
+	<target name="compile" depends="init,clean, makedir">
+		<javac srcdir="${test}" destdir="${build.test.dir}">
+			<classpath refid="classpath_jars" />
+		</javac>
+
+	</target>
+
+	<!-- Run the TestNG Tests -->
+	<!-- Output is HTML/XML, reports are by default HTML-->
+	<target name="testng" depends="compile">
+		<testng classpath="${test.classpath};${build.test.dir}" suitename="Math Operations">
+			<xmlfileset dir = "${basedir}" includes="testng.xml"/>
+		</testng>
+	</target>
+	
+	<target name="main" depends="testng">
+		<description>Main target</description>
+		<junitreport todir="${test.report.dir}">
+		            <fileset dir="${junit-xml-dir}" includes="TEST-*.xml"/>
+		            <report todir="${test.report.dir}"/>
+		        </junitreport>
+		
+		<jar destfile="${jar.artifact}/TestNGHomework.jar" basedir="${build.test.dir}"/>
+	</target>
+
+
+</project>
